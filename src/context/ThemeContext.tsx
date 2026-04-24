@@ -9,10 +9,15 @@ export interface ThemeContextValue {
   toggleTheme: () => void
 }
 
+// FIX: Ensure this is exported!
 export const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem(THEME_KEY) as Theme | null) ?? 'light')
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === 'undefined') return 'light'
+    const stored = localStorage.getItem(THEME_KEY) as Theme | null
+    return stored ?? 'light'
+  })
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
@@ -20,7 +25,10 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   }, [theme])
 
   const value = useMemo(
-    () => ({ theme, toggleTheme: () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light')) }),
+    () => ({
+      theme,
+      toggleTheme: () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light')),
+    }),
     [theme],
   )
 
