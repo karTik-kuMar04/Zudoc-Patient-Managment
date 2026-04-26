@@ -9,7 +9,6 @@ export interface ThemeContextValue {
   toggleTheme: () => void
 }
 
-// FIX: Ensure this is exported!
 export const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
